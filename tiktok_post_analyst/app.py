@@ -330,12 +330,12 @@ def execute_auto_fetch(url):
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
                 
-                # Fetch statistics from metadata
-                st.session_state.views = info.get("view_count") or 0
-                st.session_state.likes = info.get("like_count") or 0
+                # Fetch statistics from metadata using multi-key fallbacks for bulletproof reliability
+                st.session_state.views = info.get("view_count") or info.get("play_count") or 0
+                st.session_state.likes = info.get("like_count") or info.get("digg_count") or 0
                 st.session_state.comments = info.get("comment_count") or 0
-                st.session_state.shares = info.get("share_count") or 0
-                st.session_state.saves = info.get("collect_count") or info.get("repost_count") or 0
+                st.session_state.shares = info.get("share_count") or info.get("repost_count") or info.get("shares") or info.get("shares_count") or 0
+                st.session_state.saves = info.get("collect_count") or info.get("save_count") or info.get("saves") or info.get("collects") or 0
                 
                 # Automatically calculate smart Click volume based on 1.2% benchmark
                 st.session_state.clicks = int(st.session_state.views * 0.012)
