@@ -12,356 +12,11 @@ except ImportError:
 
 # Set premium page config
 st.set_page_config(
-    page_title="TikTok Post Performance Analyst",
+    page_title="Social Post Performance Analyst",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
-
-# Custom Injectable CSS for Premium Dark Glassmorphism Theme with glowing accents
-st.markdown("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
-
-    /* Global styling overrides */
-    .stApp {
-        background: linear-gradient(135deg, #09070f 0%, #15102a 50%, #060408 100%);
-        color: #E2E8F0;
-        font-family: 'Inter', sans-serif;
-    }
-
-    h1, h2, h3, h4, h5, h6 {
-        font-family: 'Outfit', sans-serif !important;
-        font-weight: 700 !important;
-        letter-spacing: -0.02em;
-    }
-
-    /* Gradient Title */
-    .main-title {
-        background: linear-gradient(90deg, #FF0050 0%, #a855f7 50%, #00F2FE 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 3.2rem !important;
-        font-weight: 800 !important;
-        text-align: center;
-        margin-bottom: 0.1rem;
-        padding-top: 1rem;
-        text-shadow: 0 0 40px rgba(168, 85, 247, 0.15);
-    }
-
-    .sub-title {
-        text-align: center;
-        color: #94A3B8;
-        font-size: 1.15rem;
-        margin-bottom: 2rem;
-        font-weight: 400;
-    }
-
-    /* Glassmorphic card style */
-    .glass-card {
-        background: rgba(30, 27, 57, 0.4);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        margin-bottom: 24px;
-    }
-
-    /* Input section header */
-    .section-header {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: #FFFFFF;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    /* Custom Auto-Fetch Action Banner */
-    .fetch-status {
-        padding: 12px 18px;
-        border-radius: 12px;
-        margin-bottom: 20px;
-        font-size: 0.92rem;
-        line-height: 1.5;
-        border-left: 5px solid;
-    }
-    
-    .fetch-status.success {
-        background: rgba(16, 185, 129, 0.12);
-        border: 1px solid rgba(16, 185, 129, 0.25);
-        border-left: 5px solid #10B981;
-        color: #34D399;
-    }
-    
-    .fetch-status.warning {
-        background: rgba(245, 158, 11, 0.12);
-        border: 1px solid rgba(245, 158, 11, 0.25);
-        border-left: 5px solid #F59E0B;
-        color: #FBBF24;
-    }
-
-    /* Metric Cards Grid */
-    .metric-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 16px;
-        margin-bottom: 24px;
-    }
-
-    .metric-card {
-        background: rgba(20, 16, 38, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.07);
-        border-radius: 16px;
-        padding: 20px;
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .metric-card:hover {
-        transform: translateY(-4px);
-        border-color: rgba(168, 85, 247, 0.4);
-        box-shadow: 0 12px 30px rgba(168, 85, 247, 0.15);
-    }
-
-    .metric-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-    }
-
-    .metric-card.post-time::before { background: #6366F1; }
-    .metric-card.views::before { background: #00F2FE; }
-    .metric-card.er::before { background: #FF0050; }
-    .metric-card.clicks::before { background: #a855f7; }
-    .metric-card.shares::before { background: #EAB308; }
-    .metric-card.comments::before { background: #EC4899; }
-    .metric-card.saves::before { background: #3B82F6; }
-    .metric-card.cr::before { background: #10B981; }
-
-    .metric-value {
-        font-family: 'Outfit', sans-serif;
-        font-size: 2.1rem;
-        font-weight: 700;
-        margin: 8px 0;
-        color: white;
-    }
-    
-    .metric-value-small {
-        font-family: 'Outfit', sans-serif;
-        font-size: 1.15rem;
-        font-weight: 600;
-        margin: 12px 0;
-        color: white;
-        line-height: 1.4;
-    }
-
-    .metric-card.post-time .metric-value-small { text-shadow: 0 0 10px rgba(99, 102, 241, 0.3); }
-    .metric-card.views .metric-value { text-shadow: 0 0 10px rgba(0, 242, 254, 0.3); }
-    .metric-card.er .metric-value { text-shadow: 0 0 10px rgba(255, 0, 80, 0.3); }
-    .metric-card.clicks .metric-value { text-shadow: 0 0 10px rgba(168, 85, 247, 0.3); }
-    .metric-card.shares .metric-value { text-shadow: 0 0 10px rgba(234, 179, 8, 0.3); }
-    .metric-card.comments .metric-value { text-shadow: 0 0 10px rgba(236, 72, 153, 0.3); }
-    .metric-card.saves .metric-value { text-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
-    .metric-card.cr .metric-value { text-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
-
-    .metric-label {
-        font-size: 0.82rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: #94A3B8;
-        font-weight: 600;
-        margin-top: 4px;
-    }
-
-    /* Styled tactical alert boxes */
-    .insight-box {
-        padding: 16px 20px;
-        border-radius: 12px;
-        margin-bottom: 16px;
-        border-left: 5px solid;
-        background: rgba(30, 27, 57, 0.3);
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .insight-box.success {
-        border-left-color: #10B981;
-        background: rgba(16, 185, 129, 0.08);
-        border: 1px solid rgba(16, 185, 129, 0.15);
-        border-left-width: 5px;
-    }
-    .insight-box.info {
-        border-left-color: #06B6D4;
-        background: rgba(6, 182, 212, 0.08);
-        border: 1px solid rgba(6, 182, 212, 0.15);
-        border-left-width: 5px;
-    }
-    .insight-box.warning {
-        border-left-color: #F59E0B;
-        background: rgba(245, 158, 11, 0.08);
-        border: 1px solid rgba(245, 158, 11, 0.15);
-        border-left-width: 5px;
-    }
-    .insight-box.danger {
-        border-left-color: #EF4444;
-        background: rgba(239, 68, 68, 0.08);
-        border: 1px solid rgba(239, 68, 68, 0.15);
-        border-left-width: 5px;
-    }
-
-    .insight-title {
-        font-weight: 700;
-        font-family: 'Outfit', sans-serif;
-        font-size: 1rem;
-    }
-    .insight-box.success .insight-title { color: #34D399; }
-    .insight-box.info .insight-title { color: #22D3EE; }
-    .insight-box.warning .insight-title { color: #FBBF24; }
-    .insight-box.danger .insight-title { color: #FCA5A5; }
-
-    .insight-text {
-        font-size: 0.92rem;
-        color: #CBD5E1;
-        line-height: 1.5;
-    }
-
-    /* Style the forms input widgets */
-    .stTextInput>div>div>input, .stNumberInput>div>div>input {
-        background-color: rgba(15, 12, 27, 0.6) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        color: white !important;
-        border-radius: 8px !important;
-        transition: all 0.3s ease;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-    }
-    
-    .stTextInput>div>div>input:focus, .stNumberInput>div>div>input:focus {
-        border-color: #00F2FE !important;
-        box-shadow: 0 0 10px rgba(0, 242, 254, 0.2) !important;
-    }
-
-    /* Primary and Form buttons */
-    .stButton>button {
-        border-radius: 10px !important;
-        font-family: 'Outfit', sans-serif !important;
-        font-weight: 700 !important;
-        transition: all 0.3s ease !important;
-        padding-top: 12px !important;
-        padding-bottom: 12px !important;
-        font-size: 0.95rem !important;
-    }
-
-    /* Main submit button in form */
-    .stForm .stButton>button {
-        background: linear-gradient(90deg, #FF0050 0%, #a855f7 50%, #00F2FE 100%) !important;
-        color: white !important;
-        border: none !important;
-        padding: 14px 30px !important;
-        width: 100% !important;
-        box-shadow: 0 4px 15px rgba(255, 0, 80, 0.25) !important;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        font-size: 1rem !important;
-    }
-
-    .stForm .stButton>button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 8px 25px rgba(255, 0, 80, 0.4) !important;
-    }
-
-    /* Floating / Anchor Mobile Button style */
-    .jump-btn {
-        display: none;
-        text-align: center;
-        background: linear-gradient(90deg, #FF0050 0%, #a855f7 100%);
-        color: white !important;
-        padding: 14px 20px;
-        border-radius: 12px;
-        font-family: 'Outfit', sans-serif;
-        font-weight: 700;
-        text-decoration: none !important;
-        margin-bottom: 25px;
-        box-shadow: 0 6px 20px rgba(255, 0, 80, 0.35);
-        text-transform: uppercase;
-        font-size: 0.95rem;
-        letter-spacing: 0.06em;
-        transition: all 0.3s ease;
-    }
-
-    .jump-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(255, 0, 80, 0.55);
-    }
-
-    /* Mobile media queries to make it extremely responsive and touch friendly */
-    @media (max-width: 768px) {
-        .main-title {
-            font-size: 2.2rem !important;
-            padding-top: 0.5rem;
-        }
-        .sub-title {
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-        }
-        .metric-container {
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-        }
-        .metric-card {
-            padding: 14px 10px;
-            border-radius: 12px;
-        }
-        .metric-value {
-            font-size: 1.55rem !important;
-            margin: 4px 0;
-        }
-        .metric-value-small {
-            font-size: 0.92rem !important;
-            margin: 6px 0;
-        }
-        .metric-label {
-            font-size: 0.72rem;
-            letter-spacing: 0.05em;
-        }
-        .jump-btn {
-            display: block; /* Displayed only on mobile stack view */
-        }
-        .insight-box {
-            padding: 12px 15px;
-            border-radius: 10px;
-        }
-        .insight-title {
-            font-size: 0.92rem;
-        }
-        .insight-text {
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
-        .stForm {
-            padding: 18px !important;
-        }
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# Application Header
-st.markdown("<h1 class='main-title'>TikTok Post Performance Analyst</h1>", unsafe_allow_html=True)
-st.markdown("<div class='sub-title'>Live Video Metadata Scraper & Social Performance Intelligence Dashboard</div>", unsafe_allow_html=True)
-
-# Layout: Form Block (Left) & Results Block (Right)
-col_left, col_right = st.columns([10, 13])
 
 # Session state initialization for holding results and pre-fills
 if 'video_url' not in st.session_state:
@@ -387,14 +42,417 @@ if 'fetch_message_type' not in st.session_state:
 if 'calculated' not in st.session_state:
     st.session_state.calculated = False
 
-# Auto-Fetch Logic using yt-dlp
+# Auto-Detect Active Platform from URL
+active_platform = "Generic"
+url_lower = st.session_state.video_url.lower()
+if "tiktok.com" in url_lower:
+    active_platform = "TikTok"
+elif "facebook.com" in url_lower or "fb.watch" in url_lower:
+    active_platform = "Facebook"
+elif "t.me" in url_lower:
+    active_platform = "Telegram"
+
+# Brand Styling Palettes for Morphing CSS UI
+if active_platform == "TikTok":
+    primary_color = "#FF0050"       # TikTok Pink
+    secondary_color = "#00F2FE"     # TikTok Cyan
+    accent_gradient = "linear-gradient(90deg, #FF0050 0%, #a855f7 50%, #00F2FE 100%)"
+    card_glow = "rgba(255, 0, 80, 0.15)"
+    brand_title = "TikTok Post Analyst"
+    brand_logo = "🎵"
+elif active_platform == "Facebook":
+    primary_color = "#1877F2"       # Facebook Royal Blue
+    secondary_color = "#38BDF8"     # Facebook Light Blue
+    accent_gradient = "linear-gradient(90deg, #1877F2 0%, #00F2FE 100%)"
+    card_glow = "rgba(24, 119, 242, 0.15)"
+    brand_title = "Facebook Post Analyst"
+    brand_logo = "👥"
+elif active_platform == "Telegram":
+    primary_color = "#0088cc"       # Telegram Sky Blue
+    secondary_color = "#00F2FE"     # Telegram Cyan
+    accent_gradient = "linear-gradient(90deg, #0088cc 0%, #22D3EE 100%)"
+    card_glow = "rgba(0, 136, 204, 0.15)"
+    brand_title = "Telegram Post Analyst"
+    brand_logo = "✈️"
+else:
+    primary_color = "#a855f7"       # Generic Purple
+    secondary_color = "#FF0050"     # Generic Pink
+    accent_gradient = "linear-gradient(90deg, #a855f7 0%, #ec4899 50%, #FF0050 100%)"
+    card_glow = "rgba(168, 85, 247, 0.15)"
+    brand_title = "Social Post Performance Analyst"
+    brand_logo = "📊"
+
+# Platform Specific Dashboard Terminology
+likes_label = "Reactions" if active_platform in ["Facebook", "Telegram"] else "Likes"
+comments_label = "Replies" if active_platform == "Telegram" else "Comments"
+shares_label = "Forwards (Shares)" if active_platform == "Telegram" else "Shares"
+saves_label = "Saved / Bookmarks" if active_platform == "Telegram" else "Saves"
+views_label = "Impressions" if active_platform == "Facebook" else "Impressions (Views)"
+
+# Custom Injectable CSS for morphing branding colors
+st.markdown(f"""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+    /* Global styling overrides */
+    .stApp {{
+        background: linear-gradient(135deg, #09070f 0%, #110d24 50%, #050407 100%);
+        color: #E2E8F0;
+        font-family: 'Inter', sans-serif;
+    }}
+
+    h1, h2, h3, h4, h5, h6 {{
+        font-family: 'Outfit', sans-serif !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.02em;
+    }}
+
+    /* Gradient Title based on dynamic platform branding */
+    .main-title {{
+        background: {accent_gradient};
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 3.2rem !important;
+        font-weight: 800 !important;
+        text-align: center;
+        margin-bottom: 0.1rem;
+        padding-top: 1rem;
+        text-shadow: 0 0 45px {card_glow};
+        transition: all 0.5s ease;
+    }}
+
+    .sub-title {{
+        text-align: center;
+        color: #94A3B8;
+        font-size: 1.15rem;
+        margin-bottom: 2rem;
+        font-weight: 400;
+    }}
+
+    /* Glassmorphic card style */
+    .glass-card {{
+        background: rgba(30, 27, 57, 0.4);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        margin-bottom: 24px;
+    }}
+
+    /* Input section header */
+    .section-header {{
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #FFFFFF;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }}
+
+    /* Custom Auto-Fetch Action Banner */
+    .fetch-status {{
+        padding: 12px 18px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        font-size: 0.92rem;
+        line-height: 1.5;
+        border-left: 5px solid;
+    }}
+    
+    .fetch-status.success {{
+        background: rgba(16, 185, 129, 0.12);
+        border: 1px solid rgba(16, 185, 129, 0.25);
+        border-left: 5px solid #10B981;
+        color: #34D399;
+    }}
+    
+    .fetch-status.warning {{
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.25);
+        border-left: 5px solid #F59E0B;
+        color: #FBBF24;
+    }}
+
+    /* Metric Cards Grid */
+    .metric-container {{
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }}
+
+    .metric-card {{
+        background: rgba(20, 16, 38, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }}
+
+    .metric-card:hover {{
+        transform: translateY(-4px);
+        border-color: {primary_color};
+        box-shadow: 0 12px 30px {card_glow};
+    }}
+
+    .metric-card::before {{
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+    }}
+
+    .metric-card.post-time::before {{ background: #6366F1; }}
+    .metric-card.views::before {{ background: {secondary_color}; }}
+    .metric-card.er::before {{ background: {primary_color}; }}
+    .metric-card.clicks::before {{ background: #a855f7; }}
+    .metric-card.shares::before {{ background: #EAB308; }}
+    .metric-card.comments::before {{ background: #EC4899; }}
+    .metric-card.saves::before {{ background: #3B82F6; }}
+    .metric-card.cr::before {{ background: #10B981; }}
+
+    .metric-value {{
+        font-family: 'Outfit', sans-serif;
+        font-size: 2.1rem;
+        font-weight: 700;
+        margin: 8px 0;
+        color: white;
+    }}
+    
+    .metric-value-small {{
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin: 12px 0;
+        color: white;
+        line-height: 1.4;
+    }}
+
+    .metric-card.post-time .metric-value-small {{ text-shadow: 0 0 10px rgba(99, 102, 241, 0.3); }}
+    .metric-card.views .metric-value {{ text-shadow: 0 0 10px rgba(0, 242, 254, 0.3); }}
+    .metric-card.er .metric-value {{ text-shadow: 0 0 10px rgba(255, 0, 80, 0.3); }}
+    .metric-card.clicks .metric-value {{ text-shadow: 0 0 10px rgba(168, 85, 247, 0.3); }}
+    .metric-card.shares .metric-value {{ text-shadow: 0 0 10px rgba(234, 179, 8, 0.3); }}
+    .metric-card.comments .metric-value {{ text-shadow: 0 0 10px rgba(236, 72, 153, 0.3); }}
+    .metric-card.saves .metric-value {{ text-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }}
+    .metric-card.cr .metric-value {{ text-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }}
+
+    .metric-label {{
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #94A3B8;
+        font-weight: 600;
+        margin-top: 4px;
+    }}
+
+    /* Styled tactical alert boxes */
+    .insight-box {{
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        border-left: 5px solid;
+        background: rgba(30, 27, 57, 0.3);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }}
+
+    .insight-box.success {{
+        border-left-color: #10B981;
+        background: rgba(16, 185, 129, 0.08);
+        border: 1px solid rgba(16, 185, 129, 0.15);
+        border-left-width: 5px;
+    }}
+    .insight-box.info {{
+        border-left-color: #06B6D4;
+        background: rgba(6, 182, 212, 0.08);
+        border: 1px solid rgba(6, 182, 212, 0.15);
+        border-left-width: 5px;
+    }}
+    .insight-box.warning {{
+        border-left-color: #F59E0B;
+        background: rgba(245, 158, 11, 0.08);
+        border: 1px solid rgba(245, 158, 11, 0.15);
+        border-left-width: 5px;
+    }}
+    .insight-box.danger {{
+        border-left-color: #EF4444;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.15);
+        border-left-width: 5px;
+    }}
+
+    .insight-title {{
+        font-weight: 700;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1rem;
+    }}
+    .insight-box.success .insight-title {{ color: #34D399; }}
+    .insight-box.info .insight-title {{ color: #22D3EE; }}
+    .insight-box.warning .insight-title {{ color: #FBBF24; }}
+    .insight-box.danger .insight-title {{ color: #FCA5A5; }}
+
+    .insight-text {{
+        font-size: 0.92rem;
+        color: #CBD5E1;
+        line-height: 1.5;
+    }}
+
+    /* Style the forms input widgets */
+    .stTextInput>div>div>input, .stNumberInput>div>div>input {{
+        background-color: rgba(15, 12, 27, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        border-radius: 8px !important;
+        transition: all 0.3s ease;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }}
+    
+    .stTextInput>div>div>input:focus, .stNumberInput>div>div>input:focus {{
+        border-color: {secondary_color} !important;
+        box-shadow: 0 0 10px rgba(0, 242, 254, 0.2) !important;
+    }}
+
+    /* Primary and Form buttons */
+    .stButton>button {{
+        border-radius: 10px !important;
+        font-family: 'Outfit', sans-serif !important;
+        font-weight: 700 !important;
+        transition: all 0.3s ease !important;
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
+        font-size: 0.95rem !important;
+    }}
+
+    /* Main submit button in form */
+    .stForm .stButton>button {{
+        background: {accent_gradient} !important;
+        color: white !important;
+        border: none !important;
+        padding: 14px 30px !important;
+        width: 100% !important;
+        box-shadow: 0 4px 15px {card_glow} !important;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 1rem !important;
+    }}
+
+    .stForm .stButton>button:hover {{
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px {card_glow} !important;
+    }}
+
+    /* Floating / Anchor Mobile Button style */
+    .jump-btn {{
+        display: none;
+        text-align: center;
+        background: {accent_gradient};
+        color: white !important;
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        text-decoration: none !important;
+        margin-bottom: 25px;
+        box-shadow: 0 6px 20px {card_glow};
+        text-transform: uppercase;
+        font-size: 0.95rem;
+        letter-spacing: 0.06em;
+        transition: all 0.3s ease;
+    }}
+
+    .jump-btn:hover {{
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px {card_glow};
+    }}
+
+    /* Mobile media queries to make it extremely responsive and touch friendly */
+    @media (max-width: 768px) {{
+        .main-title {{
+            font-size: 2.2rem !important;
+            padding-top: 0.5rem;
+        }}
+        .sub-title {{
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }}
+        .metric-container {{
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }}
+        .metric-card {{
+            padding: 14px 10px;
+            border-radius: 12px;
+        }}
+        .metric-value {{
+            font-size: 1.55rem !important;
+            margin: 4px 0;
+        }}
+        .metric-value-small {{
+            font-size: 0.92rem !important;
+            margin: 6px 0;
+        }}
+        .metric-label {{
+            font-size: 0.72rem;
+            letter-spacing: 0.05em;
+        }}
+        .jump-btn {{
+            display: block; /* Displayed only on mobile stack view */
+        }}
+        .insight-box {{
+            padding: 12px 15px;
+            border-radius: 10px;
+        }}
+        .insight-title {{
+            font-size: 0.92rem;
+        }}
+        .insight-text {{
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }}
+        .stForm {{
+            padding: 18px !important;
+        }}
+    }}
+</style>
+""", unsafe_allow_html=True)
+
+# Application Header (branded morphing logo + title)
+st.markdown(f"<h1 class='main-title'>{brand_logo} {brand_title}</h1>", unsafe_allow_html=True)
+st.markdown("<div class='sub-title'>Live Video Scraper & Social Performance Intelligence Dashboard</div>", unsafe_allow_html=True)
+
+# Layout: Form Block (Left) & Results Block (Right)
+col_left, col_right = st.columns([10, 13])
+
+# Auto-Fetch Logic using yt-dlp supporting multi-platform
 def execute_auto_fetch(url):
     if not url:
-        st.session_state.fetch_message = "❌ Please enter a valid TikTok Video URL first."
+        st.session_state.fetch_message = "❌ Please enter a valid post link first."
         st.session_state.fetch_message_type = "warning"
         return
 
-    with st.spinner("🔍 Connecting to TikTok & extracting live metrics..."):
+    # Detect Platform
+    url_low = url.lower()
+    platform = "Generic"
+    if "tiktok.com" in url_low:
+        platform = "TikTok"
+    elif "facebook.com" in url_low or "fb.watch" in url_low:
+        platform = "Facebook"
+    elif "t.me" in url_low:
+        platform = "Telegram"
+
+    with st.spinner(f"🔍 Connecting to {platform} & extracting live post metrics..."):
         try:
             if not yt_dlp:
                 raise ImportError("yt-dlp package is missing.")
@@ -409,9 +467,9 @@ def execute_auto_fetch(url):
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
                 
-                # Fetch statistics from metadata using multi-key fallbacks for bulletproof reliability
+                # Dynamic multi-key metric mapping per platform for bulletproof extraction
                 st.session_state.views = info.get("view_count") or info.get("play_count") or 0
-                st.session_state.likes = info.get("like_count") or info.get("digg_count") or 0
+                st.session_state.likes = info.get("like_count") or info.get("digg_count") or info.get("reaction_count") or 0
                 st.session_state.comments = info.get("comment_count") or 0
                 st.session_state.shares = info.get("share_count") or info.get("repost_count") or info.get("shares") or info.get("shares_count") or 0
                 st.session_state.saves = info.get("collect_count") or info.get("save_count") or info.get("saves") or info.get("collects") or 0
@@ -426,36 +484,50 @@ def execute_auto_fetch(url):
                 else:
                     st.session_state.post_datetime = datetime.today()
                 
-                title = info.get("title") or "TikTok Post"
-                st.session_state.fetch_message = f"🎉 **Success!** Live metrics for **\"{title[:40]}...\"** successfully scraped. Adjust values below if needed!"
+                title = info.get("title") or f"{platform} Post"
+                st.session_state.fetch_message = f"🎉 **Success!** Live metrics for {platform} post **\"{title[:40]}...\"** successfully scraped. Adjust values below if needed!"
                 st.session_state.fetch_message_type = "success"
                 st.session_state.calculated = False # Trigger re-calculation
                 
         except Exception as e:
-            # High-fidelity Fallback: Populate realistic mock values so the app remains an amazing fully interactive demo
-            st.session_state.views = 48200
-            st.session_state.likes = 3400
-            st.session_state.comments = 180
-            st.session_state.shares = 220
-            st.session_state.saves = 450
-            st.session_state.clicks = int(48200 * 0.012) # 578 Clicks
+            # Custom Mock fallbacks tailored contextually per platform
+            if platform == "Facebook":
+                st.session_state.views = 28500
+                st.session_state.likes = 1450
+                st.session_state.comments = 280
+                st.session_state.shares = 95
+                st.session_state.saves = 120
+            elif platform == "Telegram":
+                st.session_state.views = 16400
+                st.session_state.likes = 980
+                st.session_state.comments = 45
+                st.session_state.shares = 150
+                st.session_state.saves = 85
+            else: # TikTok / Generic Fallback
+                st.session_state.views = 48200
+                st.session_state.likes = 3400
+                st.session_state.comments = 180
+                st.session_state.shares = 220
+                st.session_state.saves = 450
+            
+            st.session_state.clicks = int(st.session_state.views * 0.012)
             st.session_state.post_datetime = datetime.today()
             
             st.session_state.fetch_message = (
-                "⚠️ **Auto-Fetch Notice**: Rate-limiting or server IP blocks prevented direct scraping. "
+                f"⚠️ **Auto-Fetch Notice**: Rate-limiting or server IP blocks prevented direct {platform} scraping. "
                 "The form has been pre-populated with **realistic demo metrics** so you can still fully test and interact with the dashboard!"
             )
             st.session_state.fetch_message_type = "warning"
             st.session_state.calculated = False
 
 with col_left:
-    st.markdown("<div class='section-header'>🔗 Paste Video Link</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-header'>🔗 Paste Video / Post Link</div>", unsafe_allow_html=True)
     
     # Input link outside form so it is highly interactive
     video_url_input = st.text_input(
-        "TikTok Video URL", 
+        "Post Link", 
         value=st.session_state.video_url,
-        placeholder="https://www.tiktok.com/@username/video/123456789",
+        placeholder="Paste TikTok, Facebook video, or Telegram channel link...",
         label_visibility="collapsed"
     )
     st.session_state.video_url = video_url_input
@@ -473,6 +545,7 @@ with col_left:
         </div>
         """, unsafe_allow_html=True)
 
+    # Floating Jump anchor scroll button for stacked mobile views
     if st.session_state.calculated:
         st.markdown('<a href="#dashboard-anchor" class="jump-btn">⚡ Jump to Live Dashboard 👇</a>', unsafe_allow_html=True)
 
@@ -488,23 +561,23 @@ with col_left:
             post_time = st.time_input("Actual Post Time", value=st.session_state.post_datetime.time())
             
         views = st.number_input(
-            "Impressions (Total Views)", 
+            views_label, 
             min_value=0, 
             value=st.session_state.views, 
             step=1,
-            help="Total impressions/views of the video."
+            help="Total impressions or views of the post."
         )
         
         # Interactive Inputs grouped neatly
         st.markdown("<div style='font-weight: 500; font-size: 0.88rem; color: #94A3B8; margin-bottom: 5px;'>Engagement & Clicks</div>", unsafe_allow_html=True)
         col_metrics_1, col_metrics_2 = st.columns(2)
         with col_metrics_1:
-            likes = st.number_input("Likes (Calculates ER)", min_value=0, value=st.session_state.likes, step=1)
-            shares = st.number_input("Shares", min_value=0, value=st.session_state.shares, step=1)
-            clicks = st.number_input("Clicks (Calculates CR)", min_value=0, value=st.session_state.clicks, step=1, help="Total clicks directed from this video.")
+            likes = st.number_input(f"{likes_label} (Calculates ER)", min_value=0, value=st.session_state.likes, step=1)
+            shares = st.number_input(shares_label, min_value=0, value=st.session_state.shares, step=1)
+            clicks = st.number_input("Clicks (Calculates CR)", min_value=0, value=st.session_state.clicks, step=1, help="Clicks generated from this post link.")
         with col_metrics_2:
-            comments = st.number_input("Comments", min_value=0, value=st.session_state.comments, step=1)
-            saves = st.number_input("Saves (Bookmarks)", min_value=0, value=st.session_state.saves, step=1)
+            comments = st.number_input(comments_label, min_value=0, value=st.session_state.comments, step=1)
+            saves = st.number_input(saves_label, min_value=0, value=st.session_state.saves, step=1)
             
         # Submit Button
         submit_btn = st.form_submit_button("Analyze Performance")
@@ -538,7 +611,7 @@ with col_right:
     if st.session_state.calculated:
         formatted_date = st.session_state.post_datetime.strftime("%B %d, %Y at %I:%M %p")
         
-        # 1. Gorgeous HTML Grid showing EXACTLY the metrics requested by the USER
+        # 1. Gorgeous HTML Grid showing EXACTLY the metrics requested by the USER (branded colors)
         metrics_html = f"""
         <div class="metric-container">
             <div class="metric-card post-time">
@@ -546,7 +619,7 @@ with col_right:
                 <div class="metric-value-small">{formatted_date}</div>
             </div>
             <div class="metric-card views">
-                <div class="metric-label">Impressions</div>
+                <div class="metric-label">{views_label}</div>
                 <div class="metric-value">{st.session_state.views:,}</div>
             </div>
             <div class="metric-card er">
@@ -558,15 +631,15 @@ with col_right:
                 <div class="metric-value">{st.session_state.clicks:,}</div>
             </div>
             <div class="metric-card shares">
-                <div class="metric-label">Shares</div>
+                <div class="metric-label">{shares_label}</div>
                 <div class="metric-value">{st.session_state.shares:,}</div>
             </div>
             <div class="metric-card comments">
-                <div class="metric-label">Comments</div>
+                <div class="metric-label">{comments_label}</div>
                 <div class="metric-value">{st.session_state.comments:,}</div>
             </div>
             <div class="metric-card saves">
-                <div class="metric-label">Saves</div>
+                <div class="metric-label">{saves_label}</div>
                 <div class="metric-value">{st.session_state.saves:,}</div>
             </div>
             <div class="metric-card cr">
@@ -581,10 +654,10 @@ with col_right:
         col_chart, col_table = st.columns([13, 10])
         
         with col_chart:
-            st.markdown("#### ⚡ Engagement Breakdown", unsafe_allow_html=True)
+            st.markdown(f"#### ⚡ {likes_label} Breakdown", unsafe_allow_html=True)
             
-            # Interactive Plotly Donut Chart
-            labels = ['Likes', 'Comments', 'Shares', 'Saves']
+            # Interactive Plotly Donut Chart matched to active branding
+            labels = [likes_label, comments_label, shares_label, saves_label]
             values = [st.session_state.likes, st.session_state.comments, st.session_state.shares, st.session_state.saves]
             
             if sum(values) == 0:
@@ -594,7 +667,7 @@ with col_right:
                     labels=labels,
                     values=values,
                     hole=.5,
-                    marker=dict(colors=['#FF0050', '#00F2FE', '#EAB308', '#3B82F6']),
+                    marker=dict(colors=[primary_color, secondary_color, '#EAB308', '#3B82F6']),
                     hoverinfo="label+value+percent",
                     textinfo="percent",
                     textfont=dict(size=12, color='white', family='Inter')
@@ -627,14 +700,14 @@ with col_right:
             summary_markdown = f"""
 | Attribute | Raw Value |
 | :--- | :--- |
-| **TikTok URL** | {url_display} |
-| **Impressions** | `{st.session_state.views:,}` |
+| **{active_platform} Post Link** | {url_display} |
+| **{views_label}** | `{st.session_state.views:,}` |
 | **Engagement Rate** | **`{st.session_state.er:.2f}%`** |
 | **Conversion Rate** | **`{st.session_state.cr:.2f}%`** |
 | **Clicks** | `{st.session_state.clicks:,}` |
-| **Shares** | `{st.session_state.shares:,}` |
-| **Comments** | `{st.session_state.comments:,}` |
-| **Saves** | `{st.session_state.saves:,}` |
+| **{shares_label}** | `{st.session_state.shares:,}` |
+| **{comments_label}** | `{st.session_state.comments:,}` |
+| **{saves_label}** | `{st.session_state.saves:,}` |
 | **Total Interactions** | `{total_ints:,}` |
 """
             st.markdown(summary_markdown)
@@ -648,25 +721,25 @@ with col_right:
             er_class = "success"
             er_title = "🔥 High-Performing Engagement Rate"
             er_text = (
-                f"Your Engagement Rate is a remarkable **{er_val:.2f}%** (TikTok Benchmark: >6%). This video strongly "
-                "resonated with your audience! The visual hook, audio choice, and storytelling format are exceptionally "
-                "strong. **Recommendation:** Double down on this exact style and editing pace immediately."
+                f"Your Engagement Rate is a remarkable **{er_val:.2f}%** (Social Benchmark: >6%). This post strongly "
+                "resonated with your audience! The visual layout, copywriting hooks, and topic format are exceptionally "
+                "strong. **Recommendation:** Double down on this exact style and creative angle immediately."
             )
         elif 3.0 <= er_val < 6.0:
             er_class = "info"
             er_title = "⚡ Healthy Engagement Rate"
             er_text = (
-                f"Your Engagement Rate is **{er_val:.2f}%** which aligns well with standard healthy metrics (TikTok Benchmark: 3%-6%). "
+                f"Your Engagement Rate is **{er_val:.2f}%** which aligns well with standard healthy metrics (Social Benchmark: 3%-6%). "
                 "The community is interacting with your content. **Recommendation:** "
-                "Initiate conversations in the comment section by replying to top comments with interactive questions."
+                "Initiate conversations in the comment section by replying to top replies with interactive questions."
             )
         else:
             er_class = "danger"
             er_title = "📉 Lower Engagement Threshold"
             er_text = (
-                f"Your Engagement Rate is **{er_val:.2f}%** which falls below typical high-performing criteria (TikTok Benchmark: <3%). "
-                "Audience attention is dropping off early. **Recommendation:** Critically evaluate the first 3 seconds of "
-                "your video (the hook) and make sure it has immediately engaging text or audio overlays."
+                f"Your Engagement Rate is **{er_val:.2f}%** which falls below typical high-performing criteria (Social Benchmark: <3%). "
+                "Audience attention is dropping off early. **Recommendation:** Critically evaluate your visual thumbnail, "
+                "the first sentence of your post copy, and make sure it has immediately engaging visual triggers."
             )
                 
         cr_val = st.session_state.cr
@@ -675,23 +748,23 @@ with col_right:
             cr_title = "🎯 Outstanding Click-Through Conversion"
             cr_text = (
                 f"Your Conversion Rate is a high **{cr_val:.2f}%** (Benchmark: >2%). Your audience is highly motivated "
-                "to take direct action! The call-to-action (CTA) inside the video was exceptionally clear and aligned with "
-                "viewer intent. **Recommendation:** Capture this momentum to finalize purchases or signs-up."
+                "to take direct action! The call-to-action (CTA) inside the description was exceptionally clear and aligned with "
+                "viewer intent. **Recommendation:** Capture this momentum to finalize landing page purchases or sign-ups."
             )
         elif 0.8 <= cr_val < 2.0:
             cr_class = "info"
             cr_title = "🧭 Moderate Click-Through Conversion"
             cr_text = (
                 f"Your Conversion Rate is **{cr_val:.2f}%** (Benchmark: 0.8%-2%). A healthy percentage of viewers visited "
-                "your profile/link. **Recommendation:** Add a stronger sense of urgency to your call-to-action (e.g. 'Limited time offer in bio')."
+                "your profile/link. **Recommendation:** Add a stronger sense of urgency to your call-to-action (e.g. 'Limited time offer')."
             )
         else:
             cr_class = "danger"
             cr_title = "🛑 Underperforming Conversion Funnel"
             cr_text = (
                 f"Your Conversion Rate is currently **{cr_val:.2f}%** which indicates a leak in the funnel (Benchmark: <0.8%). "
-                "Viewers are watching but have very little incentive to check your profile or click your link. **Recommendation:** "
-                "Make your Call to Action (CTA) explicit. Rather than 'check link', use value-driven CTAs: 'Grab the free template at the link in my bio!'"
+                "Viewers are reading but have very little incentive to click your link. **Recommendation:** "
+                "Make your Call to Action (CTA) explicit. Rather than 'check link', use value-driven CTAs: 'Grab the free template at the link below!'"
             )
 
         st.markdown(f"""
@@ -710,16 +783,15 @@ with col_right:
         st.markdown("""
         <div class="glass-card" style="text-align: center; padding: 60px 30px; margin-top: 20px;">
             <div style="font-size: 4.5rem; margin-bottom: 20px; animation: pulse 2s infinite;">🚀</div>
-            <h3 style="color: white; margin-bottom: 10px; font-size: 1.5rem;">TikTok Metric Scraper Active</h3>
+            <h3 style="color: white; margin-bottom: 10px; font-size: 1.5rem;">Multi-Platform Scraper Active</h3>
             <p style="color: #94A3B8; max-width: 480px; margin: 0 auto 30px; line-height: 1.6; font-size: 0.95rem;">
-                Paste a TikTok URL above and click <b>Auto-Fetch Live Metrics</b>. 
-                Our extraction engine will automatically pull the views, engagement metrics, duration, 
-                and posting time directly from the platform!
+                Paste a <b>TikTok</b>, <b>Facebook</b>, or <b>Telegram</b> link above and click <b>Auto-Fetch Live Metrics</b>. 
+                Our extraction engine will automatically identify the platform, morph the UI styling, and pull live metrics directly!
             </p>
             <div style="display: inline-flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-                <span style="background: rgba(255, 0, 80, 0.15); border: 1px solid rgba(255, 0, 80, 0.3); border-radius: 20px; padding: 6px 16px; font-size: 0.85rem; color: #FF0050; font-weight: 600;">Auto-Fetch Scraper</span>
-                <span style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 20px; padding: 6px 16px; font-size: 0.85rem; color: #00F2FE; font-weight: 600;">8 Custom Metric Cards</span>
-                <span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 6px 16px; font-size: 0.85rem; color: #10B981; font-weight: 600;">Interactive Chart</span>
+                <span style="background: rgba(255, 0, 80, 0.15); border: 1px solid rgba(255, 0, 80, 0.3); border-radius: 20px; padding: 6px 16px; font-size: 0.85rem; color: #FF0050; font-weight: 600;">TikTok Scraper</span>
+                <span style="background: rgba(24, 119, 242, 0.15); border: 1px solid rgba(24, 119, 242, 0.3); border-radius: 20px; padding: 6px 16px; font-size: 0.85rem; color: #1877F2; font-weight: 600;">Facebook Scraper</span>
+                <span style="background: rgba(0, 136, 204, 0.15); border: 1px solid rgba(0, 136, 204, 0.3); border-radius: 20px; padding: 6px 16px; font-size: 0.85rem; color: #0088cc; font-weight: 600;">Telegram Scraper</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
