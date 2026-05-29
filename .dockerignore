@@ -1,0 +1,10 @@
+python_embed/
+python-embed.zip
+setup_python.ps1
+.git/
+.gitignore
+__pycache__/
+*.pyc
+.streamlit/
+Dockerfile
+.dockerignore
