@@ -1,0 +1,17 @@
+# Python environment
+python_embed/
+python-embed.zip
+setup_python.ps1
+
+# Python caching
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Streamlit config / cache
+.streamlit/
