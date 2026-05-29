@@ -243,6 +243,8 @@ st.markdown("""
         color: white !important;
         border-radius: 8px !important;
         transition: all 0.3s ease;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
     }
     
     .stTextInput>div>div>input:focus, .stNumberInput>div>div>input:focus {
@@ -256,6 +258,9 @@ st.markdown("""
         font-family: 'Outfit', sans-serif !important;
         font-weight: 700 !important;
         transition: all 0.3s ease !important;
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
+        font-size: 0.95rem !important;
     }
 
     /* Main submit button in form */
@@ -263,16 +268,90 @@ st.markdown("""
         background: linear-gradient(90deg, #FF0050 0%, #a855f7 50%, #00F2FE 100%) !important;
         color: white !important;
         border: none !important;
-        padding: 12px 30px !important;
+        padding: 14px 30px !important;
         width: 100% !important;
         box-shadow: 0 4px 15px rgba(255, 0, 80, 0.25) !important;
         text-transform: uppercase;
         letter-spacing: 0.05em;
+        font-size: 1rem !important;
     }
 
     .stForm .stButton>button:hover {
         transform: translateY(-2px) !important;
         box-shadow: 0 8px 25px rgba(255, 0, 80, 0.4) !important;
+    }
+
+    /* Floating / Anchor Mobile Button style */
+    .jump-btn {
+        display: none;
+        text-align: center;
+        background: linear-gradient(90deg, #FF0050 0%, #a855f7 100%);
+        color: white !important;
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        text-decoration: none !important;
+        margin-bottom: 25px;
+        box-shadow: 0 6px 20px rgba(255, 0, 80, 0.35);
+        text-transform: uppercase;
+        font-size: 0.95rem;
+        letter-spacing: 0.06em;
+        transition: all 0.3s ease;
+    }
+
+    .jump-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(255, 0, 80, 0.55);
+    }
+
+    /* Mobile media queries to make it extremely responsive and touch friendly */
+    @media (max-width: 768px) {
+        .main-title {
+            font-size: 2.2rem !important;
+            padding-top: 0.5rem;
+        }
+        .sub-title {
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        .metric-container {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        .metric-card {
+            padding: 14px 10px;
+            border-radius: 12px;
+        }
+        .metric-value {
+            font-size: 1.55rem !important;
+            margin: 4px 0;
+        }
+        .metric-value-small {
+            font-size: 0.92rem !important;
+            margin: 6px 0;
+        }
+        .metric-label {
+            font-size: 0.72rem;
+            letter-spacing: 0.05em;
+        }
+        .jump-btn {
+            display: block; /* Displayed only on mobile stack view */
+        }
+        .insight-box {
+            padding: 12px 15px;
+            border-radius: 10px;
+        }
+        .insight-title {
+            font-size: 0.92rem;
+        }
+        .insight-text {
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        .stForm {
+            padding: 18px !important;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -394,6 +473,9 @@ with col_left:
         </div>
         """, unsafe_allow_html=True)
 
+    if st.session_state.calculated:
+        st.markdown('<a href="#dashboard-anchor" class="jump-btn">⚡ Jump to Live Dashboard 👇</a>', unsafe_allow_html=True)
+
     st.markdown("<hr style='border: 0; height: 1px; background: rgba(255,255,255,0.08); margin: 20px 0;'>", unsafe_allow_html=True)
     st.markdown("<div class='section-header'>📝 Verify & Adjust Metrics</div>", unsafe_allow_html=True)
     
@@ -450,6 +532,7 @@ with col_left:
 
 # Right Side Panel: Output Analytics & Insights
 with col_right:
+    st.markdown("<div id='dashboard-anchor'></div>", unsafe_allow_html=True)
     st.markdown("### 📊 Performance Analytics Dashboard", unsafe_allow_html=True)
     
     if st.session_state.calculated:
