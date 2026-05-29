@@ -12,7 +12,7 @@ except ImportError:
 
 # Set premium page config
 st.set_page_config(
-    page_title="Social Post Performance Analyst",
+    page_title="TikTok Post Performance Analyst",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -42,61 +42,20 @@ if 'fetch_message_type' not in st.session_state:
 if 'calculated' not in st.session_state:
     st.session_state.calculated = False
 
-# Auto-Detect Active Platform from URL
-active_platform = "Generic"
-url_lower = st.session_state.video_url.lower()
-if "tiktok.com" in url_lower:
-    active_platform = "TikTok"
-elif "facebook.com" in url_lower or "fb.watch" in url_lower:
-    active_platform = "Facebook"
-elif "t.me" in url_lower:
-    active_platform = "Telegram"
+# TikTok Cyberpunk Brand Theme Colors
+primary_color = "#FF0050"       # TikTok Pink
+secondary_color = "#00F2FE"     # TikTok Cyan
+accent_gradient = "linear-gradient(90deg, #FF0050 0%, #a855f7 50%, #00F2FE 100%)"
+card_glow = "rgba(255, 0, 80, 0.15)"
 
-# Brand Styling Palettes for Morphing CSS UI
-if active_platform == "TikTok":
-    primary_color = "#FF0050"       # TikTok Pink
-    secondary_color = "#00F2FE"     # TikTok Cyan
-    accent_gradient = "linear-gradient(90deg, #FF0050 0%, #a855f7 50%, #00F2FE 100%)"
-    card_glow = "rgba(255, 0, 80, 0.15)"
-    brand_title = "TikTok Post Analyst"
-    brand_logo = "🎵"
-elif active_platform == "Facebook":
-    primary_color = "#1877F2"       # Facebook Royal Blue
-    secondary_color = "#38BDF8"     # Facebook Light Blue
-    accent_gradient = "linear-gradient(90deg, #1877F2 0%, #00F2FE 100%)"
-    card_glow = "rgba(24, 119, 242, 0.15)"
-    brand_title = "Facebook Post Analyst"
-    brand_logo = "👥"
-elif active_platform == "Telegram":
-    primary_color = "#0088cc"       # Telegram Sky Blue
-    secondary_color = "#00F2FE"     # Telegram Cyan
-    accent_gradient = "linear-gradient(90deg, #0088cc 0%, #22D3EE 100%)"
-    card_glow = "rgba(0, 136, 204, 0.15)"
-    brand_title = "Telegram Post Analyst"
-    brand_logo = "✈️"
-else:
-    primary_color = "#a855f7"       # Generic Purple
-    secondary_color = "#FF0050"     # Generic Pink
-    accent_gradient = "linear-gradient(90deg, #a855f7 0%, #ec4899 50%, #FF0050 100%)"
-    card_glow = "rgba(168, 85, 247, 0.15)"
-    brand_title = "Social Post Performance Analyst"
-    brand_logo = "📊"
-
-# Platform Specific Dashboard Terminology
-likes_label = "Reactions" if active_platform in ["Facebook", "Telegram"] else "Likes"
-comments_label = "Replies" if active_platform == "Telegram" else "Comments"
-shares_label = "Forwards (Shares)" if active_platform == "Telegram" else "Shares"
-saves_label = "Saved / Bookmarks" if active_platform == "Telegram" else "Saves"
-views_label = "Impressions" if active_platform == "Facebook" else "Impressions (Views)"
-
-# Custom Injectable CSS for morphing branding colors
+# Custom Injectable CSS for Dedicated Premium TikTok Cyberpunk Glassmorphism Theme
 st.markdown(f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
     /* Global styling overrides */
     .stApp {{
-        background: linear-gradient(135deg, #09070f 0%, #110d24 50%, #050407 100%);
+        background: linear-gradient(135deg, #09070f 0%, #120e24 50%, #050407 100%);
         color: #E2E8F0;
         font-family: 'Inter', sans-serif;
     }}
@@ -107,7 +66,7 @@ st.markdown(f"""
         letter-spacing: -0.02em;
     }}
 
-    /* Gradient Title based on dynamic platform branding */
+    /* Glowing Gradient Title */
     .main-title {{
         background: {accent_gradient};
         -webkit-background-clip: text;
@@ -118,7 +77,6 @@ st.markdown(f"""
         margin-bottom: 0.1rem;
         padding-top: 1rem;
         text-shadow: 0 0 45px {card_glow};
-        transition: all 0.5s ease;
     }}
 
     .sub-title {{
@@ -428,31 +386,21 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-# Application Header (branded morphing logo + title)
-st.markdown(f"<h1 class='main-title'>{brand_logo} {brand_title}</h1>", unsafe_allow_html=True)
+# Application Header
+st.markdown("<h1 class='main-title'>📊 TikTok Post Performance Analyst</h1>", unsafe_allow_html=True)
 st.markdown("<div class='sub-title'>Live Video Scraper & Social Performance Intelligence Dashboard</div>", unsafe_allow_html=True)
 
 # Layout: Form Block (Left) & Results Block (Right)
 col_left, col_right = st.columns([10, 13])
 
-# Auto-Fetch Logic using yt-dlp supporting multi-platform
+# Auto-Fetch Logic specialized for TikTok using yt-dlp
 def execute_auto_fetch(url):
     if not url:
-        st.session_state.fetch_message = "❌ Please enter a valid post link first."
+        st.session_state.fetch_message = "❌ Please enter a valid TikTok Video URL first."
         st.session_state.fetch_message_type = "warning"
         return
 
-    # Detect Platform
-    url_low = url.lower()
-    platform = "Generic"
-    if "tiktok.com" in url_low:
-        platform = "TikTok"
-    elif "facebook.com" in url_low or "fb.watch" in url_low:
-        platform = "Facebook"
-    elif "t.me" in url_low:
-        platform = "Telegram"
-
-    with st.spinner(f"🔍 Connecting to {platform} & extracting live post metrics..."):
+    with st.spinner("🔍 Connecting to TikTok & extracting live video metrics..."):
         try:
             if not yt_dlp:
                 raise ImportError("yt-dlp package is missing.")
@@ -467,9 +415,9 @@ def execute_auto_fetch(url):
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(url, download=False)
                 
-                # Dynamic multi-key metric mapping per platform for bulletproof extraction
+                # Fetch statistics from metadata with multi-key fallbacks
                 st.session_state.views = info.get("view_count") or info.get("play_count") or 0
-                st.session_state.likes = info.get("like_count") or info.get("digg_count") or info.get("reaction_count") or 0
+                st.session_state.likes = info.get("like_count") or info.get("digg_count") or 0
                 st.session_state.comments = info.get("comment_count") or 0
                 st.session_state.shares = info.get("share_count") or info.get("repost_count") or info.get("shares") or info.get("shares_count") or 0
                 st.session_state.saves = info.get("collect_count") or info.get("save_count") or info.get("saves") or info.get("collects") or 0
@@ -484,50 +432,36 @@ def execute_auto_fetch(url):
                 else:
                     st.session_state.post_datetime = datetime.today()
                 
-                title = info.get("title") or f"{platform} Post"
-                st.session_state.fetch_message = f"🎉 **Success!** Live metrics for {platform} post **\"{title[:40]}...\"** successfully scraped. Adjust values below if needed!"
+                title = info.get("title") or "TikTok Post"
+                st.session_state.fetch_message = f"🎉 **Success!** Live metrics for TikTok post **\"{title[:40]}...\"** successfully scraped. Adjust values below if needed!"
                 st.session_state.fetch_message_type = "success"
                 st.session_state.calculated = False # Trigger re-calculation
                 
         except Exception as e:
-            # Custom Mock fallbacks tailored contextually per platform
-            if platform == "Facebook":
-                st.session_state.views = 28500
-                st.session_state.likes = 1450
-                st.session_state.comments = 280
-                st.session_state.shares = 95
-                st.session_state.saves = 120
-            elif platform == "Telegram":
-                st.session_state.views = 16400
-                st.session_state.likes = 980
-                st.session_state.comments = 45
-                st.session_state.shares = 150
-                st.session_state.saves = 85
-            else: # TikTok / Generic Fallback
-                st.session_state.views = 48200
-                st.session_state.likes = 3400
-                st.session_state.comments = 180
-                st.session_state.shares = 220
-                st.session_state.saves = 450
-            
-            st.session_state.clicks = int(st.session_state.views * 0.012)
+            # High-fidelity Fallback: Populate realistic TikTok mock values
+            st.session_state.views = 48200
+            st.session_state.likes = 3400
+            st.session_state.comments = 180
+            st.session_state.shares = 220
+            st.session_state.saves = 450
+            st.session_state.clicks = int(48200 * 0.012) # 578 Clicks
             st.session_state.post_datetime = datetime.today()
             
             st.session_state.fetch_message = (
-                f"⚠️ **Auto-Fetch Notice**: Rate-limiting or server IP blocks prevented direct {platform} scraping. "
+                "⚠️ **Auto-Fetch Notice**: Rate-limiting or server IP blocks prevented direct TikTok scraping. "
                 "The form has been pre-populated with **realistic demo metrics** so you can still fully test and interact with the dashboard!"
             )
             st.session_state.fetch_message_type = "warning"
             st.session_state.calculated = False
 
 with col_left:
-    st.markdown("<div class='section-header'>🔗 Paste Video / Post Link</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-header'>🔗 Paste TikTok Link</div>", unsafe_allow_html=True)
     
     # Input link outside form so it is highly interactive
     video_url_input = st.text_input(
-        "Post Link", 
+        "TikTok Video URL", 
         value=st.session_state.video_url,
-        placeholder="Paste TikTok, Facebook video, or Telegram channel link...",
+        placeholder="https://www.tiktok.com/@username/video/123456789",
         label_visibility="collapsed"
     )
     st.session_state.video_url = video_url_input
@@ -561,23 +495,23 @@ with col_left:
             post_time = st.time_input("Actual Post Time", value=st.session_state.post_datetime.time())
             
         views = st.number_input(
-            views_label, 
+            "Impressions (Total Views)", 
             min_value=0, 
             value=st.session_state.views, 
             step=1,
-            help="Total impressions or views of the post."
+            help="Total impressions/views of the video."
         )
         
         # Interactive Inputs grouped neatly
         st.markdown("<div style='font-weight: 500; font-size: 0.88rem; color: #94A3B8; margin-bottom: 5px;'>Engagement & Clicks</div>", unsafe_allow_html=True)
         col_metrics_1, col_metrics_2 = st.columns(2)
         with col_metrics_1:
-            likes = st.number_input(f"{likes_label} (Calculates ER)", min_value=0, value=st.session_state.likes, step=1)
-            shares = st.number_input(shares_label, min_value=0, value=st.session_state.shares, step=1)
-            clicks = st.number_input("Clicks (Calculates CR)", min_value=0, value=st.session_state.clicks, step=1, help="Clicks generated from this post link.")
+            likes = st.number_input("Likes (Calculates ER)", min_value=0, value=st.session_state.likes, step=1)
+            shares = st.number_input("Shares", min_value=0, value=st.session_state.shares, step=1)
+            clicks = st.number_input("Clicks (Calculates CR)", min_value=0, value=st.session_state.clicks, step=1, help="Total clicks directed from this video.")
         with col_metrics_2:
-            comments = st.number_input(comments_label, min_value=0, value=st.session_state.comments, step=1)
-            saves = st.number_input(saves_label, min_value=0, value=st.session_state.saves, step=1)
+            comments = st.number_input("Comments", min_value=0, value=st.session_state.comments, step=1)
+            saves = st.number_input("Saves (Bookmarks)", min_value=0, value=st.session_state.saves, step=1)
             
         # Submit Button
         submit_btn = st.form_submit_button("Analyze Performance")
@@ -611,7 +545,7 @@ with col_right:
     if st.session_state.calculated:
         formatted_date = st.session_state.post_datetime.strftime("%B %d, %Y at %I:%M %p")
         
-        # 1. Gorgeous HTML Grid showing EXACTLY the metrics requested by the USER (branded colors)
+        # Gorgeous HTML Grid showing EXACTLY the metrics requested by the USER
         metrics_html = f"""
         <div class="metric-container">
             <div class="metric-card post-time">
@@ -619,7 +553,7 @@ with col_right:
                 <div class="metric-value-small">{formatted_date}</div>
             </div>
             <div class="metric-card views">
-                <div class="metric-label">{views_label}</div>
+                <div class="metric-label">Impressions</div>
                 <div class="metric-value">{st.session_state.views:,}</div>
             </div>
             <div class="metric-card er">
@@ -631,15 +565,15 @@ with col_right:
                 <div class="metric-value">{st.session_state.clicks:,}</div>
             </div>
             <div class="metric-card shares">
-                <div class="metric-label">{shares_label}</div>
+                <div class="metric-label">Shares</div>
                 <div class="metric-value">{st.session_state.shares:,}</div>
             </div>
             <div class="metric-card comments">
-                <div class="metric-label">{comments_label}</div>
+                <div class="metric-label">Comments</div>
                 <div class="metric-value">{st.session_state.comments:,}</div>
             </div>
             <div class="metric-card saves">
-                <div class="metric-label">{saves_label}</div>
+                <div class="metric-label">Saves</div>
                 <div class="metric-value">{st.session_state.saves:,}</div>
             </div>
             <div class="metric-card cr">
@@ -654,10 +588,10 @@ with col_right:
         col_chart, col_table = st.columns([13, 10])
         
         with col_chart:
-            st.markdown(f"#### ⚡ {likes_label} Breakdown", unsafe_allow_html=True)
+            st.markdown("#### ⚡ Engagement Breakdown", unsafe_allow_html=True)
             
-            # Interactive Plotly Donut Chart matched to active branding
-            labels = [likes_label, comments_label, shares_label, saves_label]
+            # Interactive Plotly Donut Chart
+            labels = ['Likes', 'Comments', 'Shares', 'Saves']
             values = [st.session_state.likes, st.session_state.comments, st.session_state.shares, st.session_state.saves]
             
             if sum(values) == 0:
@@ -700,14 +634,14 @@ with col_right:
             summary_markdown = f"""
 | Attribute | Raw Value |
 | :--- | :--- |
-| **{active_platform} Post Link** | {url_display} |
-| **{views_label}** | `{st.session_state.views:,}` |
+| **TikTok Video URL** | {url_display} |
+| **Impressions** | `{st.session_state.views:,}` |
 | **Engagement Rate** | **`{st.session_state.er:.2f}%`** |
 | **Conversion Rate** | **`{st.session_state.cr:.2f}%`** |
 | **Clicks** | `{st.session_state.clicks:,}` |
-| **{shares_label}** | `{st.session_state.shares:,}` |
-| **{comments_label}** | `{st.session_state.comments:,}` |
-| **{saves_label}** | `{st.session_state.saves:,}` |
+| **Shares** | `{st.session_state.shares:,}` |
+| **Comments** | `{st.session_state.comments:,}` |
+| **Saves** | `{st.session_state.saves:,}` |
 | **Total Interactions** | `{total_ints:,}` |
 """
             st.markdown(summary_markdown)
@@ -721,25 +655,25 @@ with col_right:
             er_class = "success"
             er_title = "🔥 High-Performing Engagement Rate"
             er_text = (
-                f"Your Engagement Rate is a remarkable **{er_val:.2f}%** (Social Benchmark: >6%). This post strongly "
-                "resonated with your audience! The visual layout, copywriting hooks, and topic format are exceptionally "
-                "strong. **Recommendation:** Double down on this exact style and creative angle immediately."
+                f"Your Engagement Rate is a remarkable **{er_val:.2f}%** (TikTok Benchmark: >6%). This video strongly "
+                "resonated with your audience! The visual hook, audio choice, and storytelling format are exceptionally "
+                "strong. **Recommendation:** Double down on this exact style and editing pace immediately."
             )
         elif 3.0 <= er_val < 6.0:
             er_class = "info"
             er_title = "⚡ Healthy Engagement Rate"
             er_text = (
-                f"Your Engagement Rate is **{er_val:.2f}%** which aligns well with standard healthy metrics (Social Benchmark: 3%-6%). "
+                f"Your Engagement Rate is **{er_val:.2f}%** which aligns well with standard healthy metrics (TikTok Benchmark: 3%-6%). "
                 "The community is interacting with your content. **Recommendation:** "
-                "Initiate conversations in the comment section by replying to top replies with interactive questions."
+                "Initiate conversations in the comment section by replying to top comments with interactive questions."
             )
         else:
             er_class = "danger"
             er_title = "📉 Lower Engagement Threshold"
             er_text = (
-                f"Your Engagement Rate is **{er_val:.2f}%** which falls below typical high-performing criteria (Social Benchmark: <3%). "
-                "Audience attention is dropping off early. **Recommendation:** Critically evaluate your visual thumbnail, "
-                "the first sentence of your post copy, and make sure it has immediately engaging visual triggers."
+                f"Your Engagement Rate is **{er_val:.2f}%** which falls below typical high-performing criteria (TikTok Benchmark: <3%). "
+                "Audience attention is dropping off early. **Recommendation:** Critically evaluate the first 3 seconds of "
+                "your video (the hook) and make sure it has immediately engaging text or audio overlays."
             )
                 
         cr_val = st.session_state.cr
@@ -748,7 +682,7 @@ with col_right:
             cr_title = "🎯 Outstanding Click-Through Conversion"
             cr_text = (
                 f"Your Conversion Rate is a high **{cr_val:.2f}%** (Benchmark: >2%). Your audience is highly motivated "
-                "to take direct action! The call-to-action (CTA) inside the description was exceptionally clear and aligned with "
+                "to take direct action! The call-to-action (CTA) inside the video was exceptionally clear and aligned with "
                 "viewer intent. **Recommendation:** Capture this momentum to finalize landing page purchases or sign-ups."
             )
         elif 0.8 <= cr_val < 2.0:
@@ -756,15 +690,15 @@ with col_right:
             cr_title = "🧭 Moderate Click-Through Conversion"
             cr_text = (
                 f"Your Conversion Rate is **{cr_val:.2f}%** (Benchmark: 0.8%-2%). A healthy percentage of viewers visited "
-                "your profile/link. **Recommendation:** Add a stronger sense of urgency to your call-to-action (e.g. 'Limited time offer')."
+                "your profile/link. **Recommendation:** Add a stronger sense of urgency to your call-to-action (e.g. 'Limited time offer in bio')."
             )
         else:
             cr_class = "danger"
             cr_title = "🛑 Underperforming Conversion Funnel"
             cr_text = (
                 f"Your Conversion Rate is currently **{cr_val:.2f}%** which indicates a leak in the funnel (Benchmark: <0.8%). "
-                "Viewers are reading but have very little incentive to click your link. **Recommendation:** "
-                "Make your Call to Action (CTA) explicit. Rather than 'check link', use value-driven CTAs: 'Grab the free template at the link below!'"
+                "Viewers are watching but have very little incentive to check your profile or click your link. **Recommendation:** "
+                "Make your Call to Action (CTA) explicit. Rather than 'check link', use value-driven CTAs: 'Grab the free template at the link in my bio!'"
             )
 
         st.markdown(f"""
@@ -783,15 +717,16 @@ with col_right:
         st.markdown("""
         <div class="glass-card" style="text-align: center; padding: 60px 30px; margin-top: 20px;">
             <div style="font-size: 4.5rem; margin-bottom: 20px; animation: pulse 2s infinite;">🚀</div>
-            <h3 style="color: white; margin-bottom: 10px; font-size: 1.5rem;">Multi-Platform Scraper Active</h3>
+            <h3 style="color: white; margin-bottom: 10px; font-size: 1.5rem;">TikTok Metric Scraper Active</h3>
             <p style="color: #94A3B8; max-width: 480px; margin: 0 auto 30px; line-height: 1.6; font-size: 0.95rem;">
-                Paste a <b>TikTok</b>, <b>Facebook</b>, or <b>Telegram</b> link above and click <b>Auto-Fetch Live Metrics</b>. 
-                Our extraction engine will automatically identify the platform, morph the UI styling, and pull live metrics directly!
+                Paste a TikTok URL above and click <b>Auto-Fetch Live Metrics</b>. 
+                Our extraction engine will automatically pull the views, engagement metrics, duration, 
+                and posting time directly from the platform!
             </p>
             <div style="display: inline-flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
                 <span style="background: rgba(255, 0, 80, 0.15); border: 1px solid rgba(255, 0, 80, 0.3); border-radius: 20px; padding: 6px 16px; font-size: 0.85rem; color: #FF0050; font-weight: 600;">TikTok Scraper</span>
-                <span style="background: rgba(24, 119, 242, 0.15); border: 1px solid rgba(24, 119, 242, 0.3); border-radius: 20px; padding: 6px 16px; font-size: 0.85rem; color: #1877F2; font-weight: 600;">Facebook Scraper</span>
-                <span style="background: rgba(0, 136, 204, 0.15); border: 1px solid rgba(0, 136, 204, 0.3); border-radius: 20px; padding: 6px 16px; font-size: 0.85rem; color: #0088cc; font-weight: 600;">Telegram Scraper</span>
+                <span style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 20px; padding: 6px 16px; font-size: 0.85rem; color: #00F2FE; font-weight: 600;">8 Custom Metric Cards</span>
+                <span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 6px 16px; font-size: 0.85rem; color: #10B981; font-weight: 600;">Interactive Chart</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
